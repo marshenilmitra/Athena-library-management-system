@@ -1,0 +1,21 @@
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# SQLite Database files (re-generated automatically on server start)
+*.db
+backend/lms.db
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+.DS_Store

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Athena Enterprise LMS - Executive Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- App Container -->
+    <div id="app">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">LMS</div>
+                <div class="brand-text">
+                    <h1>ATHENA SYSTEM</h1>
+                    <span class="subtitle">Enterprise Portal</span>
+                </div>
+            </div>
+
+            <div class="user-card" id="userCard">
+                <div class="avatar" id="userAvatar">A</div>
+                <div class="user-info">
+                    <span class="user-name" id="userName">Guest Session</span>
+                    <span class="user-role badge" id="userRoleBadge">Unauthenticated</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="catalog">
+                    <span class="icon">📖</span> Catalog Directory
+                </button>
+                <button class="nav-btn staff-only" data-tab="circulation">
+                    <span class="icon">🔄</span> Circulation Desk
+                </button>
+                <button class="nav-btn staff-only" data-tab="members">
+                    <span class="icon">👥</span> Member Registry
+                </button>
+                <button class="nav-btn" data-tab="reservations">
+                    <span class="icon">🔖</span> Active Holds
+                </button>
+                <button class="nav-btn" data-tab="fines">
+                    <span class="icon">💰</span> Fine Ledger
+                </button>
+                <button class="nav-btn staff-only" data-tab="reports">
+                    <span class="icon">📊</span> Executive Reports
+                </button>
+                <button class="nav-btn admin-only" data-tab="admin">
+                    <span class="icon">⚙️</span> Control Center
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-secondary btn-full">
+                    <span>🚪</span> Sign Out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h2 id="currentTabTitle">Catalog Directory</h2>
+                    <span id="currentTabSubtitle">Browse inventory, filter availability, and manage reservations</span>
+                </div>
+                <div class="header-actions">
+                    <button id="themeToggleBtn" class="btn-icon" title="Toggle Light/Dark Theme">🌙</button>
+                    <button id="refreshBtn" class="btn btn-secondary">🔄 Refresh Data</button>
+                </div>
+            </header>
+
+            <!-- Dashboard Stats KPI Bar -->
+            <section class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-data">
+                        <span class="stat-label">Total Titles</span>
+                        <h3 id="statTotalBooks">0</h3>
+                        <div class="stat-trend">↑ 100% Verified</div>
+                    </div>
+                    <div class="stat-icon purple">📚</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-data">
+                        <span class="stat-label">Available Copies</span>
+                        <h3 id="statAvailableCopies">0</h3>
+                        <div class="stat-trend" style="color:var(--accent-teal);">Active Stock</div>
+                    </div>
+                    <div class="stat-icon blue">📦</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-data">
+                        <span class="stat-label">Currently Issued</span>
+                        <h3 id="statIssuedBooks">0</h3>
+                        <div class="stat-trend" style="color:var(--accent-amber);">Active Checkout</div>
+                    </div>
+                    <div class="stat-icon amber">🔄</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-data">
+                        <span class="stat-label">Overdue Items</span>
+                        <h3 id="statOverdueBooks">0</h3>
+                        <div class="stat-trend" style="color:var(--accent-rose);">Action Required</div>
+                    </div>
+                    <div class="stat-icon red">⚠️</div>
+                </div>
+            </section>
+
+            <!-- TAB: Catalog & Search -->
+            <section id="tab-catalog" class="tab-pane active">
+                <!-- Interactive Charts Section -->
+                <div class="charts-grid" id="catalogChartsSection">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h4>📈 Monthly Circulation Velocity</h4>
+                            <span class="text-muted" style="font-size:0.75rem;">Issue & Return Operations</span>
+                        </div>
+                        <div class="svg-chart-container" id="circulationChart">
+                            <div class="bar-group">
+                                <div class="bar-fill" style="height: 45%;" data-value="12 Checkouts"></div>
+                                <span class="bar-label">Jan</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-fill" style="height: 65%;" data-value="18 Checkouts"></div>
+                                <span class="bar-label">Feb</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-fill" style="height: 55%;" data-value="15 Checkouts"></div>
+                                <span class="bar-label">Mar</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-fill" style="height: 85%;" data-value="24 Checkouts"></div>
+                                <span class="bar-label">Apr</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-fill" style="height: 70%;" data-value="20 Checkouts"></div>
+                                <span class="bar-label">May</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-fill" style="height: 95%;" data-value="28 Checkouts"></div>
+                                <span class="bar-label">Jun</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h4>📊 Catalog Categories</h4>
+                            <span class="text-muted" style="font-size:0.75rem;">Inventory Split</span>
+                        </div>
+                        <div class="legend-list">
+                            <div class="legend-item">
+                                <span><span class="legend-color" style="background:var(--primary);"></span> Software Engineering</span>
+                                <strong style="font-family:var(--font-mono);">65%</strong>
+                            </div>
+                            <div class="legend-item">
+                                <span><span class="legend-color" style="background:var(--accent-teal);"></span> Computer Science</span>
+                                <strong style="font-family:var(--font-mono);">25%</strong>
+                            </div>
+                            <div class="legend-item">
+                                <span><span class="legend-color" style="background:var(--accent-amber);"></span> Data Science</span>
+                                <strong style="font-family:var(--font-mono);">10%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="catalogSearchInput" placeholder="Filter titles, authors, or ISBN numbers...">
+                        <span class="kbd-hint">Ctrl + K</span>
+                    </div>
+                    <div class="filter-box">
+                        <select id="catalogCategoryFilter">
+                            <option value="">All Categories</option>
+                        </select>
+                        <select id="catalogAvailabilityFilter">
+                            <option value="">All Availability</option>
+                            <option value="Available">Available Only</option>
+                            <option value="Unavailable">Out of Stock</option>
+                        </select>
+                    </div>
+
+                    <!-- View Switcher -->
+                    <div class="view-switcher">
+                        <button id="viewGridBtn" class="view-btn active" onclick="switchCatalogView('grid')">▦ Grid</button>
+                        <button id="viewTableBtn" class="view-btn" onclick="switchCatalogView('table')">≡ Table</button>
+                    </div>
+
+                    <div class="action-buttons staff-only">
+                        <button id="openAddBookModalBtn" class="btn btn-primary">+ Add New Title</button>
+                    </div>
+                </div>
+
+                <!-- Catalog Content Container (Grid or Table) -->
+                <div class="grid-container" id="booksGrid">
+                    <!-- Dynamic Cards or Table -->
+                </div>
+            </section>
+
+            <!-- TAB: Circulation (Issue & Return) -->
+            <section id="tab-circulation" class="tab-pane">
+                <div class="split-view">
+                    <!-- Issue Form -->
+                    <div class="card">
+                        <h3>📥 Book Circulation Issue</h3>
+                        <p class="text-muted" style="font-size: 0.8rem; margin-bottom: 0.5rem;">Issue catalog title to active member card.</p>
+                        <form id="issueBookForm" class="form-grid">
+                            <div class="form-group">
+                                <label for="issueMemberSelect">Member Account *</label>
+                                <select id="issueMemberSelect" required>
+                                    <option value="">-- Select Active Member --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="issueBookSelect">Catalog Title *</label>
+                                <select id="issueBookSelect" required>
+                                    <option value="">-- Select Available Title --</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full">Confirm Book Checkout</button>
+                        </form>
+                    </div>
+
+                    <!-- Issued Table -->
+                    <div class="card">
+                        <h3>📋 Active Circulation Ledger</h3>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tx Code</th>
+                                        <th>Title</th>
+                                        <th>Member</th>
+                                        <th>Issue Date</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="issuedTransactionsTableBody">
+                                    <!-- Rendered via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: Members Directory -->
+            <section id="tab-members" class="tab-pane">
+                <div class="action-bar">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="memberSearchInput" placeholder="Filter members by ID, name, email...">
+                    </div>
+                    <div class="action-buttons staff-only">
+                        <button id="openAddMemberModalBtn" class="btn btn-primary">+ Register Member</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Member ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email Address</th>
+                                    <th>Contact Phone</th>
+                                    <th>Linked Account</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="membersTableBody">
+                                <!-- Rendered via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: Reservations -->
+            <section id="tab-reservations" class="tab-pane">
+                <div class="card">
+                    <h3>🔖 Active Book Reservations</h3>
+                    <p class="text-muted" style="font-size:0.8rem;">Queue and status for titles currently out of stock.</p>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Reservation ID</th>
+                                    <th>Book Title</th>
+                                    <th>Member</th>
+                                    <th>Date Placed</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservationsTableBody">
+                                <!-- Rendered via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: Fines & Payments -->
+            <section id="tab-fines" class="tab-pane">
+                <div class="card">
+                    <h3>💰 Overdue Fines & Payment Ledger</h3>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Fine ID</th>
+                                    <th>Tx Code</th>
+                                    <th>Member</th>
+                                    <th>Book Title</th>
+                                    <th>Fine Amount</th>
+                                    <th>Paid Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="finesTableBody">
+                                <!-- Rendered via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: Reports & Exports -->
+            <section id="tab-reports" class="tab-pane">
+                <div class="reports-grid">
+                    <div class="card report-card">
+                        <div class="report-icon">📦</div>
+                        <h3>Inventory Ledger Report</h3>
+                        <p class="text-muted" style="font-size:0.8rem;">Complete catalog details, total stock, and available copies.</p>
+                        <button class="btn btn-primary" onclick="exportReport('inventory')">📥 Export CSV</button>
+                    </div>
+                    <div class="card report-card">
+                        <div class="report-icon">⚠️</div>
+                        <h3>Overdue Items Report</h3>
+                        <p class="text-muted" style="font-size:0.8rem;">Detailed list of overdue books, member contact details, and days overdue.</p>
+                        <button class="btn btn-primary" onclick="exportReport('overdue')">📥 Export CSV</button>
+                    </div>
+                    <div class="card report-card">
+                        <div class="report-icon">🔄</div>
+                        <h3>Circulation Report</h3>
+                        <p class="text-muted" style="font-size:0.8rem;">Summary of active borrowing transactions across members.</p>
+                        <button class="btn btn-primary" onclick="exportReport('issued')">📥 Export CSV</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: Admin & Control Center -->
+            <section id="tab-admin" class="tab-pane">
+                <div class="split-view">
+                    <!-- Manage Users -->
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                            <h3>👤 User Accounts & Permissions</h3>
+                            <button id="openAddUserModalBtn" class="btn btn-primary btn-sm">+ Add User</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Username</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Rendered via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Config Settings -->
+                    <div class="card">
+                        <h3>⚙️ Library Operating Policy</h3>
+                        <form id="configForm" class="form-grid">
+                            <div class="form-group">
+                                <label for="configMaxLimit">Max Borrow Limit (Books)</label>
+                                <input type="number" id="configMaxLimit" required min="1" max="10">
+                            </div>
+                            <div class="form-group">
+                                <label for="configBorrowDays">Borrowing Period (Days)</label>
+                                <input type="number" id="configBorrowDays" required min="1" max="60">
+                            </div>
+                            <div class="form-group">
+                                <label for="configFineRate">Daily Overdue Fine Rate ($)</label>
+                                <input type="number" step="0.25" id="configFineRate" required min="0">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full">Save System Policy</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Audit Log Section -->
+                <div class="card" style="margin-top: 1rem;">
+                    <h3>📜 Enterprise Audit Log</h3>
+                    <div class="table-container" style="max-height: 280px; overflow-y: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditLogsTableBody">
+                                <!-- Rendered via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="modal-backdrop show">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>🏢 Athena LMS Executive Sign-In</h2>
+            </div>
+            
+            <div class="quick-login-chips">
+                <span class="chip-title">Quick Demo Sign-In:</span>
+                <button class="chip" onclick="fillQuickLogin('admin', 'Admin@123')">🔑 Admin</button>
+                <button class="chip" onclick="fillQuickLogin('librarian', 'Lib@123')">📖 Librarian</button>
+                <button class="chip" onclick="fillQuickLogin('member1', 'Mem@123')">👤 Member</button>
+            </div>
+
+            <form id="loginForm" class="form-grid">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" required placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+                <div id="loginError" class="alert error hidden"></div>
+                <button type="submit" class="btn btn-primary btn-full btn-lg">Sign In to Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Add/Edit Book -->
+    <div id="bookModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="bookModalTitle">Add New Title</h3>
+                <button class="modal-close" onclick="closeModal('bookModal')">✕</button>
+            </div>
+            <form id="bookForm" class="form-grid">
+                <input type="hidden" id="bookModalId">
+                <div class="form-group">
+                    <label for="bookIsbn">ISBN *</label>
+                    <input type="text" id="bookIsbn" required placeholder="978-XXXXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label for="bookTitle">Book Title *</label>
+                    <input type="text" id="bookTitle" required placeholder="Enter full title">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookAuthor">Author *</label>
+                        <select id="bookAuthor" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookPublisher">Publisher *</label>
+                        <select id="bookPublisher" required></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookCategory">Category *</label>
+                        <select id="bookCategory" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookYear">Publication Year</label>
+                        <input type="number" id="bookYear" value="2024" min="1800" max="2030">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookTotalQty">Total Copies *</label>
+                        <input type="number" id="bookTotalQty" value="1" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookStatus">Status</label>
+                        <select id="bookStatus">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Save Catalog Record</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Add Member -->
+    <div id="memberModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Register Library Member</h3>
+                <button class="modal-close" onclick="closeModal('memberModal')">✕</button>
+            </div>
+            <form id="memberForm" class="form-grid">
+                <div class="form-group">
+                    <label for="memberName">Full Name *</label>
+                    <input type="text" id="memberName" required placeholder="e.g. Jane Smith">
+                </div>
+                <div class="form-group">
+                    <label for="memberEmail">Email Address *</label>
+                    <input type="email" id="memberEmail" required placeholder="jane@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="memberPhone">Phone Number</label>
+                    <input type="text" id="memberPhone" placeholder="+1-555-0123">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Create Member Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Add User -->
+    <div id="userModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Create User Account</h3>
+                <button class="modal-close" onclick="closeModal('userModal')">✕</button>
+            </div>
+            <form id="userForm" class="form-grid">
+                <div class="form-group">
+                    <label for="userUsername">Username *</label>
+                    <input type="text" id="userUsername" required placeholder="username">
+                </div>
+                <div class="form-group">
+                    <label for="userPassword">Password *</label>
+                    <input type="password" id="userPassword" required placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label for="userRole">Assigned Role *</label>
+                    <select id="userRole">
+                        <option value="Librarian">Librarian</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Member">Member</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Pay Fine -->
+    <div id="payFineModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Collect Fine Payment</h3>
+                <button class="modal-close" onclick="closeModal('payFineModal')">✕</button>
+            </div>
+            <form id="payFineForm" class="form-grid">
+                <input type="hidden" id="payFineId">
+                <div class="form-group">
+                    <label>Remaining Balance</label>
+                    <div id="payFineBalance" class="stat-highlight">$0.00</div>
+                </div>
+                <div class="form-group">
+                    <label for="payFineAmount">Payment Amount ($) *</label>
+                    <input type="number" step="0.01" id="payFineAmount" required min="0.01">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Record Payment</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

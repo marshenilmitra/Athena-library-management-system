@@ -80,6 +80,13 @@ def test_service_branch_behaviour(book_builder, member_builder):
     with pytest.raises(ValueError):
         services.return_book(tx_id + 999, user_info={'user_id': 2, 'username': 'librarian', 'role': 'Librarian'})
 
+    # Backdate the due date so the return below is overdue and creates a fine record,
+    # which the get_fines() assertion later in this test depends on.
+    conn = get_db()
+    conn.execute("UPDATE issue_transactions SET due_date = date('now', '-5 days') WHERE id = ?", (tx_id,))
+    conn.commit()
+    conn.close()
+
     # The service allows the first return and blocks a duplicate return on the same transaction.
     services.return_book(tx_id, user_info={'user_id': 2, 'username': 'librarian', 'role': 'Librarian'})
     with pytest.raises(ValueError):

@@ -154,3 +154,4 @@ Visit **`http://localhost:5000`** in your browser.
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Author\n**Marshenil Mitra** — [GitHub](https://github.com/marshenilmitra) · [LinkedIn](https://www.linkedin.com/in/marshenilmitra)

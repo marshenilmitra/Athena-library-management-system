@@ -572,30 +572,31 @@ def get_transactions(member_id=None, status=None, search_q=None, page=1, page_si
 # Reservation Service
 def reserve_book(book_id, member_id, user_info):
     conn = get_db()
-    cursor = conn.cursor()
+    try:
+        cursor = conn.cursor()
 
-    cursor.execute("SELECT id FROM reservations WHERE book_id = ? AND member_id = ? AND status = 'Active'", (book_id, member_id))
-    if cursor.fetchone():
+        cursor.execute("SELECT id FROM reservations WHERE book_id = ? AND member_id = ? AND status = 'Active'", (book_id, member_id))
+        if cursor.fetchone():
+            raise ValueError("Member already has an active reservation for this book.")
+
+        cursor.execute("SELECT status FROM members WHERE id = ?", (member_id,))
+        mem = cursor.fetchone()
+        if not mem or mem['status'] != 'Active':
+            raise ValueError("Member is inactive or not found.")
+
+        cursor.execute(
+            "INSERT INTO reservations (book_id, member_id, status) VALUES (?, ?, 'Active')",
+            (book_id, member_id)
+        )
+        res_id = cursor.lastrowid
+        log_audit(user_info['user_id'], user_info['username'], "RESERVE_BOOK", f"Placed reservation ID {res_id} for book ID {book_id}", conn=conn)
+        conn.commit()
+        return res_id
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
         conn.close()
-        raise ValueError("Member already has an active reservation for this book.")
-
-    cursor.execute("SELECT status FROM members WHERE id = ?", (member_id,))
-    mem = cursor.fetchone()
-    if not mem or mem['status'] != 'Active':
-        conn.close()
-        raise ValueError("Member is inactive or not found.")
-
-    cursor.execute(
-        "INSERT INTO reservations (book_id, member_id, status) VALUES (?, ?, 'Active')",
-        (book_id, member_id)
-    )
-    res_id = cursor.lastrowid
-    # PB-03 FIX: reuse conn
-    log_audit(user_info['user_id'], user_info['username'], "RESERVE_BOOK", f"Placed reservation ID {res_id} for book ID {book_id}", conn=conn)
-    conn.commit()
-    conn.close()
-    return res_id
-
 
 def cancel_reservation(reservation_id, user_info):
     conn = get_db()

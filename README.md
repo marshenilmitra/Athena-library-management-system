@@ -5,7 +5,8 @@
 [![Database](https://img.shields.io/badge/Database-SQLite%20%7C%20PostgreSQL-indigo.svg)](https://www.sqlite.org/)
 [![Tests](https://img.shields.io/badge/Unit_Tests-6_Passed-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-orange.svg)]()
-
+**🔗 Live Demo:** https://lms-3s3q.onrender.com
+> Note: hosted on Render's free tier — first load may take ~30-50s to wake up if idle.
 > A production-ready, full-stack **Enterprise Library Management System (LMS)** compliant with SRS v1.0 specifications and N-tier layered architecture. Designed with high data density, real-time analytics, RBAC permissions, atomic transaction handling, fine ledger processing, and CSV reporting.
 
 ---

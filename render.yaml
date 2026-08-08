@@ -10,16 +10,9 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn "backend.server:app" --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120
 
-    # Persistent disk for SQLite database (Free plan: 1 GB)
-    disk:
-      name: lms-data
-      mountPath: /var/data
-      sizeGB: 1
+    
 
-    envVars:
-      - key: DATABASE_URL
-        value: /var/data/lms.db           # persisted across deploys on the mounted disk
-
+    
       - key: SECRET_KEY
         generateValue: true               # Render auto-generates a secure random value
 

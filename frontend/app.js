@@ -691,10 +691,34 @@ async function handlePayFine(e) {
     }
 }
 
-// --- Reports CSV Export ---
-function exportReport(reportType) {
-    const url = `/api/reports/export/${reportType}?token=${authToken}`;
-    window.open(url, '_blank');
+// --- Reports CSV Export (SECURITY: token sent via Authorization header, not URL param) ---
+async function exportReport(reportType) {
+    try {
+        const response = await fetch(`/api/reports/export/${reportType}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.error || 'Export failed');
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `lms_${reportType}_report.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast(`${reportType.charAt(0).toUpperCase() + reportType.slice(1)} report downloaded`, 'success');
+    } catch (err) {
+        showToast('Export failed: ' + err.message, 'error');
+    }
 }
 
 // --- TAB: Admin & Configuration ---

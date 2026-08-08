@@ -1,0 +1,36 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Deploy with: Connect GitHub repo → New → Blueprint
+
+services:
+  - type: web
+    name: athena-lms-backend
+    runtime: python
+    plan: free                        # upgrade to starter for production
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn "backend.server:app" --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120
+
+    # Persistent disk for SQLite database (Free plan: 1 GB)
+    disk:
+      name: lms-data
+      mountPath: /var/data
+      sizeGB: 1
+
+    envVars:
+      - key: DATABASE_URL
+        value: /var/data/lms.db           # persisted across deploys on the mounted disk
+
+      - key: SECRET_KEY
+        generateValue: true               # Render auto-generates a secure random value
+
+      - key: ALLOWED_ORIGIN
+        value: https://your-frontend.vercel.app   # ← Replace with your Vercel URL after deploy
+
+      - key: DEBUG
+        value: false
+
+      # Optional: override default seed account passwords
+      # - key: ADMIN_PASSWORD
+      #   value: YourSecureAdminPassword
+      # - key: LIBRARIAN_PASSWORD
+      #   value: YourSecureLibPassword

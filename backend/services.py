@@ -473,6 +473,24 @@ def reserve_book(book_id, member_id, user_info):
 
 def cancel_reservation(reservation_id, user_info):
     conn = get_db()
+    cursor = conn.cursor()
+
+    # Load the reservation to verify ownership (SECURITY: prevent privilege escalation)
+    cursor.execute(
+        "SELECT r.id, r.member_id, m.user_id FROM reservations r JOIN members m ON r.member_id = m.id WHERE r.id = ?",
+        (reservation_id,)
+    )
+    reservation = cursor.fetchone()
+    if not reservation:
+        conn.close()
+        raise ValueError("Reservation not found.")
+
+    # Members can only cancel their own reservations
+    if user_info['role'] == 'Member':
+        if reservation['user_id'] != user_info['user_id']:
+            conn.close()
+            raise PermissionError("You are not authorized to cancel this reservation.")
+
     conn.execute("UPDATE reservations SET status = 'Cancelled' WHERE id = ?", (reservation_id,))
     conn.commit()
     conn.close()

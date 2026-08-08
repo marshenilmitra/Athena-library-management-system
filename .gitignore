@@ -19,3 +19,7 @@ env/
 .idea/
 *.swp
 .DS_Store
+
+# Environment variables — NEVER commit real secrets
+.env
+

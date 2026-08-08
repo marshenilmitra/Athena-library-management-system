@@ -599,26 +599,29 @@ def reserve_book(book_id, member_id, user_info):
 
 def cancel_reservation(reservation_id, user_info):
     conn = get_db()
-    cursor = conn.cursor()
+    try:
+        cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT r.id, r.member_id, m.user_id FROM reservations r JOIN members m ON r.member_id = m.id WHERE r.id = ?",
-        (reservation_id,)
-    )
-    reservation = cursor.fetchone()
-    if not reservation:
+        cursor.execute(
+            "SELECT r.id, r.member_id, m.user_id FROM reservations r JOIN members m ON r.member_id = m.id WHERE r.id = ?",
+            (reservation_id,)
+        )
+        reservation = cursor.fetchone()
+        if not reservation:
+            raise ValueError("Reservation not found.")
+
+        if user_info['role'] == 'Member':
+            if reservation['user_id'] != user_info['user_id']:
+                raise PermissionError("You are not authorized to cancel this reservation.")
+
+        conn.execute("UPDATE reservations SET status = 'Cancelled' WHERE id = ?", (reservation_id,))
+        log_audit(user_info['user_id'], user_info['username'], "CANCEL_RESERVATION", f"Cancelled reservation ID {reservation_id}", conn=conn)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
         conn.close()
-        raise ValueError("Reservation not found.")
-
-    if user_info['role'] == 'Member':
-        if reservation['user_id'] != user_info['user_id']:
-            conn.close()
-            raise PermissionError("You are not authorized to cancel this reservation.")
-
-    conn.execute("UPDATE reservations SET status = 'Cancelled' WHERE id = ?", (reservation_id,))
-    log_audit(user_info['user_id'], user_info['username'], "CANCEL_RESERVATION", f"Cancelled reservation ID {reservation_id}", conn=conn)
-    conn.commit()
-    conn.close()
 
 
 def get_reservations(member_id=None, page=1, page_size=100):

@@ -13,6 +13,26 @@ let booksCache = [];
 let membersCache = [];
 let catalogViewMode = 'grid'; // 'grid' or 'table'
 
+// ---------------------------------------------------------------------------
+// PB-10 FIX: Client-side KPI stats cache (30s TTL)
+// Prevents /api/reports/summary being called on every tab switch
+// ---------------------------------------------------------------------------
+let _statsCacheTs = 0;
+let _statsCache = null;
+const STATS_CACHE_TTL_MS = 30000; // 30 seconds
+
+// ---------------------------------------------------------------------------
+// PB-11 / PB-12 FIX: Debounce utility
+// Prevents excessive re-renders and API calls on rapid keystrokes
+// ---------------------------------------------------------------------------
+function debounce(fn, delayMs) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delayMs);
+    };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initApp();
 });
@@ -62,10 +82,12 @@ function setupEventListeners() {
     });
 
     // Search and Filter Listeners
-    document.getElementById('catalogSearchInput').addEventListener('input', filterBooks);
+    // PB-11 FIX: Debounce search input — prevents DOM re-render on every keystroke
+    document.getElementById('catalogSearchInput').addEventListener('input', debounce(filterBooks, 300));
     document.getElementById('catalogCategoryFilter').addEventListener('change', filterBooks);
     document.getElementById('catalogAvailabilityFilter').addEventListener('change', filterBooks);
-    document.getElementById('memberSearchInput').addEventListener('input', fetchMembers);
+    // PB-12 FIX: Debounce member search — prevents API call on every keystroke
+    document.getElementById('memberSearchInput').addEventListener('input', debounce(fetchMembers, 400));
 
     // Form Handlers
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
@@ -264,19 +286,34 @@ async function loadCirculationDropdowns() {
 }
 
 // --- Stats Summary KPI ---
-async function loadStatsSummary() {
+// PB-10 FIX: 30-second client-side cache — avoids 5 DB queries on every tab switch
+async function loadStatsSummary(forceRefresh = false) {
     if (!authToken) {
         document.getElementById('statsGrid').style.display = 'none';
         return;
     }
     document.getElementById('statsGrid').style.display = 'grid';
+
+    const now = Date.now();
+    if (!forceRefresh && _statsCache && (now - _statsCacheTs) < STATS_CACHE_TTL_MS) {
+        // Serve from cache — no network request needed
+        _applyStats(_statsCache);
+        return;
+    }
+
     try {
         const data = await apiRequest('/api/reports/summary');
-        document.getElementById('statTotalBooks').textContent = data.total_books;
-        document.getElementById('statAvailableCopies').textContent = data.available_copies;
-        document.getElementById('statIssuedBooks').textContent = data.currently_issued;
-        document.getElementById('statOverdueBooks').textContent = data.overdue_count;
+        _statsCache = data;
+        _statsCacheTs = now;
+        _applyStats(data);
     } catch (e) {}
+}
+
+function _applyStats(data) {
+    document.getElementById('statTotalBooks').textContent = data.total_books;
+    document.getElementById('statAvailableCopies').textContent = data.available_copies;
+    document.getElementById('statIssuedBooks').textContent = data.currently_issued;
+    document.getElementById('statOverdueBooks').textContent = data.overdue_count;
 }
 
 // --- TAB: Catalog & Books (Grid vs Table View Switcher) ---

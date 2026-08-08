@@ -4,7 +4,7 @@ import time
 import threading
 from flask import Flask, request, jsonify, send_from_directory, Response
 from backend.db import init_db, get_db
-from backend.auth import hash_password, verify_password, create_session, get_session, destroy_session
+from backend.auth import hash_password, verify_password, create_session, get_session, destroy_session, sweep_expired_sessions
 import backend.services as services
 
 # ---------------------------------------------------------------------------
@@ -143,6 +143,9 @@ def serve_static(filename):
 @app.route('/api/auth/login', methods=['POST'])
 def api_login():
     ip = request.remote_addr
+
+    # PB-08 FIX: Sweep expired sessions on each login (amortized cleanup cost)
+    sweep_expired_sessions()
 
     # Rate limit check BEFORE processing credentials
     if not _check_rate_limit(ip):

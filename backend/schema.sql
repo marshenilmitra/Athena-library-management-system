@@ -136,3 +136,16 @@ CREATE INDEX IF NOT EXISTS idx_members_member_id ON members(member_id);
 CREATE INDEX IF NOT EXISTS idx_members_email ON members(email);
 CREATE INDEX IF NOT EXISTS idx_transactions_status ON issue_transactions(status);
 CREATE INDEX IF NOT EXISTS idx_transactions_due_date ON issue_transactions(due_date);
+
+-- PB-07 FIX: Composite indexes for high-frequency query patterns
+-- Covers: active borrow count per member (BR-03 check in issue_book)
+CREATE INDEX IF NOT EXISTS idx_tx_member_status ON issue_transactions(member_id, status);
+-- Covers: overdue lookup by member
+CREATE INDEX IF NOT EXISTS idx_tx_member_due ON issue_transactions(member_id, due_date);
+-- Covers: unpaid fine lookup per member via JOIN
+CREATE INDEX IF NOT EXISTS idx_fines_payment_status ON fines(payment_status);
+-- Covers: duplicate active-reservation check in reserve_book()
+CREATE INDEX IF NOT EXISTS idx_reservations_book_member ON reservations(book_id, member_id, status);
+-- Covers: audit log ORDER BY timestamp DESC
+CREATE INDEX IF NOT EXISTS idx_audit_logs_timestamp ON audit_logs(timestamp DESC);
+

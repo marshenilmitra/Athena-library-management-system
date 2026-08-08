@@ -22,6 +22,19 @@ SESSIONS: dict = {}  # token -> {user_id, username, role, expires_at}
 SESSION_TTL = 3600 * 8  # 8 hours
 
 
+def sweep_expired_sessions():
+    """
+    PB-08 FIX: Purge all expired session entries from the in-memory dict.
+    Call this periodically (e.g., on login) to prevent unbounded memory growth
+    from sessions that were never explicitly logged out (browser closed, etc.).
+    """
+    now = time.time()
+    expired_tokens = [t for t, s in SESSIONS.items() if now > s["expires_at"]]
+    for token in expired_tokens:
+        SESSIONS.pop(token, None)
+    return len(expired_tokens)
+
+
 def hash_password(password: str) -> str:
     """Hash a password using PBKDF2-HMAC-SHA256 with a cryptographically random 16-byte salt."""
     salt = os.urandom(16)

@@ -108,9 +108,8 @@ erDiagram
 
 ### 1. Clone & Install Dependencies
 ```bash
-git clone https://github.com/your-username/library-management-system.git
-cd library-management-system
-
+git clone https://github.com/marshenilmitra/lms.git
+cd lms
 # Install Python requirements
 python -m pip install flask werkzeug
 ```
@@ -119,6 +118,7 @@ python -m pip install flask werkzeug
 ```bash
 python -m unittest backend/test_lms.py
 ```
+**E2E Tests:** Selenium suite in `tests/selenium_test/` covering login, role-based UI visibility, and logout
 
 ### 3. Launch Web Application Server
 ```bash
